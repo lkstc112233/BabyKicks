@@ -67,17 +67,17 @@
 			path = BabyKicks;
 			sourceTree = "<group>";
 		};
-		A10000000000000000000016 /* BabyKicksShared */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = BabyKicksShared;
-			sourceTree = "<group>";
-		};
 		A10000000000000000000013 /* BabyKicksWidget */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
 				A10000000000000000000015 /* Exceptions for "BabyKicksWidget" folder in "BabyKicksWidget" target */,
 			);
 			path = BabyKicksWidget;
+			sourceTree = "<group>";
+		};
+		A10000000000000000000016 /* BabyKicksShared */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = BabyKicksShared;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -160,8 +160,8 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
-				A10000000000000000000016 /* BabyKicksShared */,
 				A10000000000000000000013 /* BabyKicksWidget */,
+				A10000000000000000000016 /* BabyKicksShared */,
 			);
 			name = BabyKicksWidget;
 			packageProductDependencies = (
