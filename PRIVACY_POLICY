@@ -1,0 +1,60 @@
+Baby Kicks Privacy Policy
+
+Effective date: June 19, 2026
+
+Baby Kicks is designed to help you privately record and review fetal movement. Your data stays under your control.
+
+DATA THE APP COLLECTS
+
+Baby Kicks records only the information you provide by using the app:
+
+- The date and time of each recorded movement.
+- Temporary counting-session information, including the session start time, end time, and number of movements recorded during that session.
+
+The app does not require an account and does not collect your name, email address, location, contacts, health records, advertising identifier, or payment information.
+
+HOW YOUR DATA IS USED
+
+Your recorded movement timestamps are used only to provide the app's features, including:
+
+- Displaying daily and all-time movement counts.
+- Grouping movements into sessions.
+- Producing charts and other on-device insights.
+- Showing the current session timer and movement count in a Live Activity and the Dynamic Island.
+- Creating a CSV export when you request one.
+
+DATA STORAGE AND SHARING
+
+Your data is stored locally on your device in a SQLite database. The app and its Live Activity extension share this database through an Apple App Group container so movements can be recorded from the Dynamic Island without opening the app.
+
+Baby Kicks does not upload or synchronize your database through iCloud, CloudKit, or any Baby Kicks server. It does not sell, rent, share, or use your data for advertising or tracking.
+
+Apple may include local app data in a device backup according to your device and backup settings. Those backups are governed by Apple's privacy practices.
+
+DATA EXPORT
+
+You may export all or a selected date range of your movement history as a CSV file. An export occurs only when you request it. After export, you control where the file is saved or shared, and the privacy practices of the selected destination apply.
+
+DATA RETENTION AND DELETION
+
+Recorded movements remain on your device until you delete the app or use the app's "Delete all data" option. Deleting all data also stops the active counting session. Exported files must be deleted separately from wherever you chose to save them.
+
+ANALYTICS, TRACKING, AND THIRD-PARTY SERVICES
+
+Baby Kicks does not include third-party analytics, advertising SDKs, tracking technologies, or external data-processing services.
+
+CHILDREN'S PRIVACY
+
+Baby Kicks is intended for use by an expectant parent or caregiver. It is not directed to children and does not knowingly collect personal information from children.
+
+MEDICAL DISCLAIMER
+
+Baby Kicks is a personal tracking aid and is not a medical device. It does not provide medical advice, diagnosis, alerts, or treatment recommendations. Contact a qualified healthcare professional with questions or concerns about fetal movement or pregnancy.
+
+CHANGES TO THIS POLICY
+
+This policy may be updated if the app's data practices change. The effective date at the top of this document will identify the latest revision.
+
+CONTACT
+
+For privacy questions, issues, or requests, contact the app developer through the support contact provided on the Baby Kicks App Store listing or project repository.
