@@ -56,13 +56,26 @@ struct BabyKicksLiveActivity: Widget {
                 }
 
                 DynamicIslandExpandedRegion(.bottom) {
-                    Button(intent: RecordKickIntent()) {
-                        Label("Record movement", systemImage: "plus.circle.fill")
-                            .font(.headline)
-                            .frame(maxWidth: .infinity)
-                            .padding(.vertical, 10)
-                            .foregroundStyle(.white)
-                            .background(berry, in: Capsule())
+                    Group {
+                        if context.isStale {
+                            Button(intent: EndSessionIntent()) {
+                                Label("End completed session", systemImage: "xmark.circle.fill")
+                                    .font(.headline)
+                                    .frame(maxWidth: .infinity)
+                                    .padding(.vertical, 10)
+                                    .foregroundStyle(.white)
+                                    .background(berry, in: Capsule())
+                            }
+                        } else {
+                            Button(intent: RecordKickIntent()) {
+                                Label("Record movement", systemImage: "plus.circle.fill")
+                                .font(.headline)
+                                .frame(maxWidth: .infinity)
+                                .padding(.vertical, 10)
+                                .foregroundStyle(.white)
+                                .background(berry, in: Capsule())
+                            }
+                        }
                     }
                     .padding(.top, 6)
                 }

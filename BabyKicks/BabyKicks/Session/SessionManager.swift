@@ -9,6 +9,7 @@ final class SessionManager: ObservableObject {
     @Published private(set) var endsAt: Date?
     @Published private(set) var sessionKickCount = 0
     @Published private(set) var lastError: String?
+    private var expirationTask: Task<Void, Never>?
 
     var isActive: Bool {
         guard let endsAt else { return false }
@@ -18,7 +19,14 @@ final class SessionManager: ObservableObject {
     init() {
         if let saved = UserDefaults.standard.object(forKey: "activeSessionEndsAt") as? Date, saved > .now {
             endsAt = saved
+            scheduleExpiration(at: saved)
+        } else {
+            UserDefaults.standard.removeObject(forKey: "activeSessionEndsAt")
         }
+    }
+
+    deinit {
+        expirationTask?.cancel()
     }
 
     func start() {
@@ -27,6 +35,7 @@ final class SessionManager: ObservableObject {
         endsAt = end
         sessionKickCount = 0
         UserDefaults.standard.set(end, forKey: "activeSessionEndsAt")
+        scheduleExpiration(at: end)
 
         guard ActivityAuthorizationInfo().areActivitiesEnabled else { return }
         do {
@@ -44,6 +53,8 @@ final class SessionManager: ObservableObject {
     }
 
     func stop() {
+        expirationTask?.cancel()
+        expirationTask = nil
         endsAt = nil
         UserDefaults.standard.removeObject(forKey: "activeSessionEndsAt")
         let finalState = KickActivityAttributes.ContentState(
@@ -90,7 +101,20 @@ final class SessionManager: ObservableObject {
     }
 
     func refreshFromLiveActivity() {
-        guard let activity = Activity<KickActivityAttributes>.activities.first else {
+        let activities = Activity<KickActivityAttributes>.activities
+        let expired = activities.filter { $0.attributes.endsAt <= .now }
+        if !expired.isEmpty {
+            Task {
+                for activity in expired {
+                    await end(activity)
+                }
+            }
+        }
+
+        guard let activity = activities.first(where: { $0.attributes.endsAt > .now }) else {
+            expirationTask?.cancel()
+            expirationTask = nil
+            UserDefaults.standard.removeObject(forKey: "activeSessionEndsAt")
             if !isActive {
                 endsAt = nil
             }
@@ -102,6 +126,7 @@ final class SessionManager: ObservableObject {
             through: .now
         )) ?? activity.content.state.kickCount
         UserDefaults.standard.set(activity.attributes.endsAt, forKey: "activeSessionEndsAt")
+        scheduleExpiration(at: activity.attributes.endsAt)
 
         let state = KickActivityAttributes.ContentState(
             kickCount: sessionKickCount,
@@ -112,5 +137,40 @@ final class SessionManager: ObservableObject {
                 ActivityContent(state: state, staleDate: activity.attributes.endsAt)
             )
         }
+    }
+
+    private func scheduleExpiration(at date: Date) {
+        expirationTask?.cancel()
+        expirationTask = Task { [weak self] in
+            let delay = max(0, date.timeIntervalSinceNow)
+            try? await Task.sleep(for: .seconds(delay))
+            guard !Task.isCancelled else { return }
+            await self?.expireSessions(endingAtOrBefore: date)
+        }
+    }
+
+    private func expireSessions(endingAtOrBefore date: Date) async {
+        for activity in Activity<KickActivityAttributes>.activities
+        where activity.attributes.endsAt <= date {
+            await end(activity)
+        }
+        endsAt = nil
+        expirationTask = nil
+        UserDefaults.standard.removeObject(forKey: "activeSessionEndsAt")
+    }
+
+    private func end(_ activity: Activity<KickActivityAttributes>) async {
+        let count = (try? KickDatabase.shared.count(
+            from: activity.attributes.startedAt,
+            through: activity.attributes.endsAt
+        )) ?? activity.content.state.kickCount
+        let finalState = KickActivityAttributes.ContentState(
+            kickCount: count,
+            lastKickAt: activity.content.state.lastKickAt
+        )
+        await activity.end(
+            ActivityContent(state: finalState, staleDate: nil),
+            dismissalPolicy: .immediate
+        )
     }
 }

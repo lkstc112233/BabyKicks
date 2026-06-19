@@ -9,9 +9,22 @@ struct RecordKickIntent: LiveActivityIntent {
     static var openAppWhenRun = false
 
     func perform() async throws -> some IntentResult {
+        let activeActivities = Activity<KickActivityAttributes>.activities.filter {
+            $0.attributes.endsAt > .now
+        }
+        guard !activeActivities.isEmpty else {
+            for activity in Activity<KickActivityAttributes>.activities {
+                await activity.end(
+                    ActivityContent(state: activity.content.state, staleDate: nil),
+                    dismissalPolicy: .immediate
+                )
+            }
+            return .result()
+        }
+
         try WidgetKickWriter.record()
 
-        for activity in Activity<KickActivityAttributes>.activities {
+        for activity in activeActivities {
             let count = try WidgetKickWriter.count(
                 from: activity.attributes.startedAt,
                 through: .now

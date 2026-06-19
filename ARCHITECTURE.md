@@ -60,6 +60,8 @@ This application is a personal tracking aid, not a medical device. Medical claim
 - The displayed count is session-only. It is recalculated from SQLite using the Live Activity’s `startedAt` time rather than trusting potentially stale in-memory state.
 - When the app returns to the foreground, it reloads SQLite and reconciles the active session count with the Live Activity.
 - Existing Live Activities retain the code/configuration from the installed build that created them. After changing Live Activity behavior, stop the old session and start a new one during testing.
+- `staleDate` does not end a Live Activity. `SessionManager` schedules an in-process expiration task and ends expired activities immediately whenever the app resumes.
+- If iOS has suspended the app at the exact two-hour boundary, the stale Dynamic Island presentation changes its action to “End completed session,” which runs without opening the app. Guaranteed unattended termination at an exact future time while the app is suspended would require an ActivityKit push update from a server.
 
 ## High-level architecture
 
